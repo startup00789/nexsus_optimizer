@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
@@ -116,7 +117,7 @@ app.post("/api/ai/advisor", async (req, res) => {
   if (geminiClient) {
     try {
       const response = await geminiClient.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.8-flash",
         contents: `You are the Nexus Optimizer AI Gaming Advisor. 
 Current Telemetry: ${JSON.stringify(currentTelemetry || {})}
 User Question / System State: "${prompt}"
@@ -170,6 +171,17 @@ async function startServer() {
     });
 
     app.use(vite.middlewares);
+
+    app.use("*", async (req, res, next) => {
+      const url = req.originalUrl;
+      try {
+        let template = fs.readFileSync(path.resolve(__dirname, "index.html"), "utf-8");
+        template = await vite.transformIndexHtml(url, template);
+        res.status(200).set({ "Content-Type": "text/html" }).end(template);
+      } catch (e) {
+        next(e);
+      }
+    });
   } else {
     // Production Mode: Static build dist
     const distPath = path.resolve(__dirname, "dist");
