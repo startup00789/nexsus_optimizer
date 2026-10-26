@@ -1,0 +1,6 @@
+{
+  "name": "Nexus Optimizer — Max Edition",
+  "description": "High-performance Windows PC gaming optimization suite and real-time hardware telemetry control center.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
